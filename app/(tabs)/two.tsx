@@ -91,7 +91,7 @@ export default function EndGameCalculate() {
               onPress={() => changeStep(i + 1)}
             >
               {scoreTable[i] > 0 ? (
-                <Text style={{ color, fontWeight: "700" }}>
+                <Text style={{ color, fontWeight: "700", fontSize: 20 }}>
                   {scoreTable[i]}
                 </Text>
               ) : (
@@ -114,7 +114,13 @@ export default function EndGameCalculate() {
                 style={{ paddingVertical: 8 }}
               >
                 {scoreTable[i + 6] > 0 ? (
-                  <Text style={{ color: "#eab308", fontWeight: "700" }}>
+                  <Text
+                    style={{
+                      color: "#eab308",
+                      fontWeight: "700",
+                      fontSize: 20,
+                    }}
+                  >
                     {scoreTable[i + 6]}
                   </Text>
                 ) : (
@@ -126,7 +132,11 @@ export default function EndGameCalculate() {
         </View>
       </View>
       {currentStep < 7 ? (
-        <PileWrapper handleOnPress={handleOnPress} selected={selected} />
+        <PileWrapper
+          handleOnPress={handleOnPress}
+          selected={selected}
+          gameMode={true}
+        />
       ) : (
         <View style={styles.buttonPad}>
           {[1, 2, 3, 4, 5, 6].map((i) => (

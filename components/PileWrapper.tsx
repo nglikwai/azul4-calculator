@@ -14,15 +14,26 @@ export const pileImages = [
 type props = {
   handleOnPress: (n: number) => void;
   selected: number[];
+  gameMode?: boolean;
 };
 
-const PileWrapper: FC<props> = ({ handleOnPress, selected }) => {
+const PileWrapper: FC<props> = ({
+  handleOnPress,
+  selected,
+  gameMode = false,
+}) => {
+  const preHandleOnPress = (i: number) => {
+    console.log(selected, i, gameMode);
+    if (gameMode && selected.includes(i)) return;
+    handleOnPress(i);
+  };
+
   return (
     <View style={styles.buttonContainer}>
       {pileImages.map((image, i) => (
         <TouchableOpacity
           key={i}
-          onPress={() => handleOnPress(i + 1)}
+          onPress={() => preHandleOnPress(i + 1)}
           style={styles.button}
         >
           <Image

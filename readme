@@ -1,0 +1,8 @@
+## build android locally
+eas build --platform android --local
+
+## build web 
+npx expo export -p web 
+
+## run web
+yarn web  
