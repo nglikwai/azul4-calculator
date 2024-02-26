@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import EasyModeButton from "@/components/EasyModeButton";
+import { View } from "react-native";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -20,37 +21,32 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        tabBarActiveTintColor: "#84cc16",
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: { opacity: 0.8, height: 60 },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Calculator",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="calculator" color={color} />
           ),
-          headerRight: () => <EasyModeButton />,
         }}
       />
       <Tabs.Screen
         name="two"
         options={{
-          title: "End Game",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="gamepad" color={color} />
           ),
-          headerRight: () => <EasyModeButton />,
         }}
       />
       <Tabs.Screen
         name="three"
         options={{
-          title: "About",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="info" color={color} />,
         }}
       />
     </Tabs>

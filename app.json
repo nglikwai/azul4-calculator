@@ -2,8 +2,8 @@
   "expo": {
     "name": "AZUL4 -Calculator",
     "slug": "likwaiapp",
-    "version": "1.0.1",
-
+    "version": "4",
+    "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/images/1.png",
     "scheme": "myapp",
@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/3.png",
         "backgroundColor": "#ffffff"
@@ -28,7 +28,8 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/4.png"
+      "favicon": "./assets/images/4.png",
+      "title": "AZUL4 -Calculator"
     },
     "plugins": ["expo-router"],
     "experiments": {

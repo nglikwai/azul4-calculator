@@ -1,8 +1,11 @@
 import { StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { withExpoSnack } from "nativewind";
-import { Text, View } from "@/components/global/general";
+import { Text, View } from "react-native";
 import PileWrapper from "@/components/PileWrapper";
-import { useTile } from "./hook";
+import { useTile } from "@/hook";
+import EasyModeButton from "@/components/EasyModeButton";
+import { colors } from "./two";
+import { useApp } from "@/context";
 
 const TabOneScreen = () => {
   const {
@@ -14,44 +17,44 @@ const TabOneScreen = () => {
     reset,
   } = useTile();
 
+  const { appState } = useApp();
+
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <View style={styles.wrapper}>
         <View style={styles.container}>
           <View style={styles.scoreWrapper}>
-            <View style={styles.scoreContainer}>
-              <Text style={styles.title}>Total Score</Text>
-              <Text className="text-2xl font-black">
-                {tileScore + continueBonus}
+            <View style={styles.scoreText}>
+              <Text style={{ color: colors[5], fontWeight: "900" }}>TILE</Text>
+              <Text style={{ color: colors[5], fontWeight: "900" }}>
+                {tileScore}
               </Text>
             </View>
-            <View style={styles.subScoreContainer}>
-              <View className="items-center">
-                <Text>Tile Score</Text>
-                <Text>{tileScore}</Text>
-              </View>
-              <View className="items-center">
-                <Text>Continue Bouns</Text>
-                <Text>{continueBonus}</Text>
-              </View>
+
+            <EasyModeButton
+              score={tileScore + continueBonus}
+              bg={appState.easyMode ? "#84cc16" : "#166534"}
+            />
+
+            <View style={styles.scoreText}>
+              <Text style={{ color: colors[0], fontWeight: "900" }}>BOUNS</Text>
+              <Text style={{ color: colors[0], fontWeight: "900" }}>
+                {continueBonus}
+              </Text>
             </View>
           </View>
 
           <PileWrapper handleOnPress={handleOnPress} selected={selected} />
 
-          <View className="flex flex-row justify-between w-full px-10">
-            <View className="bg-yellow-400 rounded-xl mb-5">
+          <View style={styles.buttonContainer}>
+            <View style={{ ...styles.button, backgroundColor: "#84cc16" }}>
               <TouchableOpacity onPress={selectAll}>
-                <Text className="uppercase font-black text-white px-5 py-4">
-                  select all
-                </Text>
+                <Text style={styles.buttonText}>select all</Text>
               </TouchableOpacity>
             </View>
-            <View className="bg-blue-400 rounded-xl mb-5">
+            <View style={{ ...styles.button, backgroundColor: "#22d3ee" }}>
               <TouchableOpacity onPress={reset}>
-                <Text className="uppercase font-black text-white px-10 py-4">
-                  reset
-                </Text>
+                <Text style={styles.buttonText}>reset</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -74,31 +77,53 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  scoreContainer: {
-    display: "flex",
-    alignItems: "center",
-    padding: 10,
-  },
+
   subScoreContainer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "60%",
+    width: "50%",
+  },
+  scoreText: {
+    alignItems: "center",
+    opacity: 0.7,
   },
   tile: {
     fontSize: 20,
-    fontWeight: "bold",
   },
   scoreWrapper: {
     marginTop: 0,
+    paddingTop: 24,
     backgroundColor: "rgba(255,255,255,0.6)",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     width: "100%",
     display: "flex",
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: 20,
   },
   scrollView: {
     flexGrow: 1,
+  },
+  buttonText: {
+    padding: 10,
+    fontWeight: "700",
+    color: "white",
+    textAlign: "center",
+    textTransform: "uppercase",
+  },
+  button: {
+    borderRadius: 10,
+    padding: 4,
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 250,
+    marginBottom: 20,
   },
 });

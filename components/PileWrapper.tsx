@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "flex-start",
     marginTop: 50,
-    gap: 20,
+    width: "100%",
   },
   button: {
     justifyContent: "space-between",
@@ -77,16 +77,15 @@ const styles = StyleSheet.create({
   count: {
     width: 30,
     height: 30,
-    backgroundColor: "#cccc55",
+    backgroundColor: "#84cc16",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "#999900",
   },
   countText: {
-    fontWeight: "bold",
+    fontWeight: "900",
     textAlign: "right",
+    color: "#fff",
   },
 });

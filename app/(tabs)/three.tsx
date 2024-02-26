@@ -5,8 +5,16 @@ export default function TabThreeScreen() {
   return (
     <View style={styles.container} className="">
       <View className="w-full py-10" style={styles.info}>
-        <Text className="text-lg pb-10">Version: beta 1.1</Text>
-        <Text className="text-lg">Developed by LIK WAI</Text>
+        <Text
+          style={{
+            color: "#84cc16",
+            fontSize: 30,
+            fontWeight: "900",
+            letterSpacing: 3,
+          }}
+        >
+          VERSION: 1.4
+        </Text>
       </View>
     </View>
   );
@@ -22,5 +30,6 @@ const styles = StyleSheet.create({
   info: {
     backgroundColor: "rgba(255,255,255,0.8)",
     padding: 40,
+    borderRadius: 30,
   },
 });

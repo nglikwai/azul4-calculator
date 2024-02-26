@@ -67,7 +67,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : theme}>
+    <ThemeProvider value={theme}>
       <PaperProvider>
         <AppProvider>
           <Stack>

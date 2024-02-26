@@ -1,34 +1,46 @@
-import { Text, View } from "@/components/Themed";
-import { useState } from "react";
-import { Switch } from "react-native-paper";
+import { Text, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import { useApp } from "@/context";
 import { AppActionType } from "@/reducer";
+import { FC } from "react";
 
-const EasyModeButton = () => {
+type props = {
+  score: number;
+  bg: string;
+};
+const EasyModeButton: FC<props> = ({ score, bg }) => {
   const { appState, dispatch } = useApp();
   const { easyMode } = appState;
   return (
-    <View style={styles.switchContainer}>
-      <Text>{easyMode ? "Easy" : "Hard"}</Text>
-      <Switch
-        value={easyMode}
-        color="#fff"
-        onValueChange={() =>
-          dispatch({ type: AppActionType.SET_EASY_MODE, payload: !easyMode })
-        }
-      />
-    </View>
+    <TouchableOpacity
+      style={{ backgroundColor: bg, ...styles.scoreContainer }}
+      onPress={() =>
+        dispatch({ type: AppActionType.SET_EASY_MODE, payload: !easyMode })
+      }
+    >
+      <Text style={styles.totalScoreText}>{score}</Text>
+      <Text style={{ color: "#fff", fontWeight: "700" }}>
+        {easyMode ? "Easy" : "Hard"}
+      </Text>
+    </TouchableOpacity>
   );
 };
 
 export default EasyModeButton;
 
 const styles = StyleSheet.create({
-  switchContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+  scoreContainer: {
+    fontWeight: "700",
+    paddingHorizontal: 20,
+    paddingVertical: 4,
+    borderRadius: 50,
+    justifyContent: "center",
     alignItems: "center",
+  },
+  totalScoreText: {
+    fontSize: 40,
+    fontWeight: "700",
+    color: "#fff",
+    paddingHorizontal: 10,
   },
 });
