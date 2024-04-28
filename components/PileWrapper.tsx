@@ -12,7 +12,7 @@ export const pileImages = [
 ];
 
 type props = {
-  handleOnPress: (n: number) => void;
+  handleOnPress: (n: number, gameMode?: boolean) => void;
   selected: number[];
   gameMode?: boolean;
 };
@@ -23,9 +23,8 @@ const PileWrapper: FC<props> = ({
   gameMode = false,
 }) => {
   const preHandleOnPress = (i: number) => {
-    console.log(selected, i, gameMode);
-    if (gameMode && selected.includes(i)) return;
-    handleOnPress(i);
+    // if (gameMode && selected.includes(i)) return;
+    handleOnPress(i, gameMode);
   };
 
   return (

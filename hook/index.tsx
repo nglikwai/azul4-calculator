@@ -3,6 +3,7 @@ import { useApp } from "@/context";
 
 export const useTile = () => {
   const [selected, setSelected] = useState<number[]>([]);
+  const [_selected, set_selected] = useState<number[][]>([[]]);
   const { appState } = useApp();
   const { easyMode } = appState;
 
@@ -12,18 +13,38 @@ export const useTile = () => {
     6: 7,
   };
 
-  const handleOnPress = (n: number) => {
-    if (selected.length >= 6) return;
+  const handleOnPress = (n: number, gameMode = false) => {
+    if (selected.length >= 6 && !gameMode) return;
+
+    if (selected.length >= 12) return;
     setSelected([...selected, n]);
+
+    const __selected = [..._selected];
+
+    if (_selected?.[_selected.length - 1]?.includes(n)) {
+      __selected[_selected.length] = [n];
+    } else {
+      __selected[_selected.length - 1] = [
+        ...__selected[_selected.length - 1],
+        n,
+      ];
+    }
+    set_selected(__selected);
   };
 
-  const continueBonus = easyMode
-    ? selected.length > 3
-      ? continueBonusTable[selected.length as keyof typeof continueBonusTable]
-      : 0
-    : selected.length >= 6
-    ? 6
-    : 0;
+  const continueBonus = (() => {
+    return _selected
+      .map((s) =>
+        easyMode
+          ? s.length > 3
+            ? continueBonusTable[s.length as keyof typeof continueBonusTable]
+            : 0
+          : s.length >= 6
+          ? 6
+          : 0
+      )
+      .reduce((a, b) => a + b, 0);
+  })();
 
   const tileScore = selected.reduce((a, b) => a + b, 0);
 
@@ -33,6 +54,7 @@ export const useTile = () => {
 
   const reset = () => {
     setSelected([]);
+    set_selected([[]]);
   };
   return {
     selected,

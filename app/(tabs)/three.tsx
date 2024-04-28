@@ -13,7 +13,7 @@ export default function TabThreeScreen() {
             letterSpacing: 3,
           }}
         >
-          VERSION: 1.4
+          VERSION: 2.0
         </Text>
       </View>
     </View>

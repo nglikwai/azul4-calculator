@@ -10,6 +10,9 @@ import PileWrapper, { pileImages } from "@/components/PileWrapper";
 import { useTile } from "@/hook";
 import { useEffect, useState } from "react";
 import EasyModeButton from "@/components/EasyModeButton";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FinalScoreModal from "@/components/FinalScoreModal";
+import AllPlayModal from "@/components/AllPlayModal";
 
 export const colors = [
   "#22d3ee",
@@ -23,6 +26,11 @@ export const colors = [
 export default function EndGameCalculate() {
   const [currentStep, setCurrentStep] = useState(1);
   const [scoreTable, setScoreTable] = useState<number[]>(Array(12).fill(0));
+  const [finalScoreModalVisiblle, setFinalScoreModalVisiblle] = useState(false);
+
+  const [playModalVisible, setPlayModalVisible] = useState(false);
+  const [finalScore, setfinalScore] = useState("0");
+  const [playersTable, setPlayersTable] = useState<number[]>([]);
 
   const {
     tileScore,
@@ -34,6 +42,8 @@ export default function EndGameCalculate() {
   } = useTile();
 
   const total = tileScore + continueBonus;
+
+  const totalScore = scoreTable.reduce((a, b) => a + b, 0) + +finalScore;
 
   useEffect(() => {
     setScoreTable((prev: number[]) => {
@@ -48,6 +58,13 @@ export default function EndGameCalculate() {
     reset();
   };
 
+  const resetCurrent = () => {
+    const newTable = [...scoreTable];
+    newTable[currentStep - 1] = 0;
+    setScoreTable(newTable);
+    reset();
+  };
+
   const resetAll = () => {
     setScoreTable(Array(12).fill(0));
     setCurrentStep(1);
@@ -58,16 +75,53 @@ export default function EndGameCalculate() {
     setSelected(Array(n).fill(currentStep - 6));
   };
 
+  const nextPlayer = () => {
+    setPlayersTable([...playersTable, totalScore]);
+    resetAll();
+    setfinalScore("0");
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.scoreWrapper}>
         <View style={styles.scoreContainer}>
+          <TouchableOpacity
+            onPress={() => setPlayModalVisible(true)}
+            style={{
+              flexDirection: "row",
+              position: "absolute",
+              left: 0,
+              backgroundColor: "#84cc16",
+              borderRadius: 20,
+              padding: 10,
+            }}
+          >
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 10,
+                alignItems: "center",
+              }}
+            >
+              <FontAwesome
+                size={20}
+                style={{ marginBottom: -3 }}
+                name="user"
+                color={"#fff"}
+              />
+              <Text style={{ color: "#fff", fontWeight: "900", fontSize: 20 }}>
+                {playersTable.length}
+              </Text>
+            </View>
+          </TouchableOpacity>
           <EasyModeButton
             score={scoreTable[currentStep - 1]}
             bg={currentStep <= 6 ? colors[currentStep - 1] : "#eab308"}
           />
 
-          <View
+          <TouchableOpacity
+            onPress={() => setFinalScoreModalVisiblle(true)}
             style={{
               flexDirection: "row",
               position: "absolute",
@@ -79,9 +133,9 @@ export default function EndGameCalculate() {
           >
             <Text style={{ color: "#fff", fontWeight: "700" }}>total</Text>
             <Text style={{ marginLeft: 4, color: "#fff", fontWeight: "900" }}>
-              {scoreTable.reduce((a, b) => a + b, 0)}
+              {totalScore}
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.subScoreContainer}>
           {colors.map((color, i) => (
@@ -157,9 +211,40 @@ export default function EndGameCalculate() {
         </View>
       )}
 
-      <TouchableOpacity onPress={resetAll} style={styles.button}>
-        <Text style={styles.buttonText}>Reset</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+          width: "100%",
+        }}
+      >
+        <TouchableOpacity onPress={resetCurrent} style={styles.button}>
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+        {currentStep > 9 && (
+          <>
+            <TouchableOpacity
+              onPress={nextPlayer}
+              style={{ ...styles.button_cancel, backgroundColor: "#84cc16" }}
+            >
+              <Text style={styles.buttonText}>Next Player</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+      <FinalScoreModal
+        finalScoreModalVisiblle={finalScoreModalVisiblle}
+        setFinalScoreModalVisiblle={setFinalScoreModalVisiblle}
+        finalScore={finalScore}
+        setfinalScore={setfinalScore}
+      />
+      <AllPlayModal
+        playModalVisible={playModalVisible}
+        setPlayModalVisible={setPlayModalVisible}
+        playersTable={playersTable}
+        setPlayersTable={setPlayersTable}
+      />
     </View>
   );
 }
@@ -210,6 +295,13 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 50,
     alignItems: "center",
+  },
+  button_cancel: {
+    backgroundColor: "red",
+    paddingHorizontal: 24,
+    paddingVertical: 15,
+    borderRadius: 20,
+    marginBottom: 16,
   },
   button: {
     backgroundColor: "#22d3ee",
