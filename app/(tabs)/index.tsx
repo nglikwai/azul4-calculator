@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    borderRadius: 20,
+    borderRadius: 24,
   },
   scrollView: {
     flexGrow: 1,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   button: {
-    borderRadius: 10,
+    borderRadius: 24,
     padding: 4,
   },
   buttonContainer: {

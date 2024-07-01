@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-around",
     alignItems: "flex-start",
-    marginTop: 50,
+    marginTop: 40,
     width: "100%",
   },
   button: {

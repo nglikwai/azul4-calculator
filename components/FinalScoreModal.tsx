@@ -8,15 +8,20 @@ type props = {
   setFinalScoreModalVisiblle: (a: boolean) => void;
   finalScore: string;
   setfinalScore: (a: string) => void;
+  nextPlayer: () => void;
+  isReadyToNextPlayer: boolean;
 };
 const FinalScoreModal: FC<props> = ({
   finalScoreModalVisiblle,
   setFinalScoreModalVisiblle,
   finalScore,
   setfinalScore,
+  nextPlayer,
+  isReadyToNextPlayer,
 }) => {
   const onOk = () => {
     setFinalScoreModalVisiblle(false);
+    if (isReadyToNextPlayer) nextPlayer();
   };
 
   const setScore = (n: number) => {
@@ -24,7 +29,12 @@ const FinalScoreModal: FC<props> = ({
     setfinalScore((+(finalScore + n)).toString());
   };
   return (
-    <Modal visible={finalScoreModalVisiblle} style={{ margin: 20 }}>
+    <Modal
+      visible={finalScoreModalVisiblle}
+      style={{ margin: 20 }}
+      dismissable={true}
+      onDismiss={() => setFinalScoreModalVisiblle(false)}
+    >
       <View style={styles.container}>
         <Text style={{ fontWeight: "900", fontSize: 20, color: "#999" }}>
           Current Score
@@ -76,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 24,
     display: "flex",
     alignItems: "center",
     gap: 20,

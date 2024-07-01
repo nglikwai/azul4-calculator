@@ -64,5 +64,6 @@ export const useTile = () => {
     tileScore,
     selectAll,
     reset,
+    set_selected,
   };
 };

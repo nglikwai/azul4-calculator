@@ -9,10 +9,11 @@ import {
 import PileWrapper, { pileImages } from "@/components/PileWrapper";
 import { useTile } from "@/hook";
 import { useEffect, useState } from "react";
-import EasyModeButton from "@/components/EasyModeButton";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FinalScoreModal from "@/components/FinalScoreModal";
 import AllPlayModal from "@/components/AllPlayModal";
+import PlayerScoreDisplay from "@/components/PlayerScoreDisplay";
+import GameButtonGroup from "@/components/GameButtonGroup";
+import MySnackbar from "@/components/Snackbar";
 
 export const colors = [
   "#22d3ee",
@@ -24,6 +25,8 @@ export const colors = [
 ];
 
 export default function EndGameCalculate() {
+  const [visible, setVisible] = useState(false);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [scoreTable, setScoreTable] = useState<number[]>(Array(12).fill(0));
   const [finalScoreModalVisiblle, setFinalScoreModalVisiblle] = useState(false);
@@ -31,6 +34,7 @@ export default function EndGameCalculate() {
   const [playModalVisible, setPlayModalVisible] = useState(false);
   const [finalScore, setfinalScore] = useState("0");
   const [playersTable, setPlayersTable] = useState<number[]>([]);
+  const [isReadyToNextPlayer, setIsReadyToNextPlayer] = useState(false);
 
   const {
     tileScore,
@@ -39,6 +43,7 @@ export default function EndGameCalculate() {
     selected,
     setSelected,
     reset,
+    set_selected,
   } = useTile();
 
   const total = tileScore + continueBonus;
@@ -66,6 +71,7 @@ export default function EndGameCalculate() {
   };
 
   const resetAll = () => {
+    setIsReadyToNextPlayer(false);
     setScoreTable(Array(12).fill(0));
     setCurrentStep(1);
     reset();
@@ -73,118 +79,38 @@ export default function EndGameCalculate() {
 
   const addTypeScore = (n: number) => {
     setSelected(Array(n).fill(currentStep - 6));
+    set_selected([Array(n).fill(currentStep - 6)]);
   };
 
   const nextPlayer = () => {
+    if (!+finalScore) {
+      setIsReadyToNextPlayer(true);
+      setFinalScoreModalVisiblle(true);
+      return;
+    }
     setPlayersTable([...playersTable, totalScore]);
     resetAll();
     setfinalScore("0");
+    setVisible(true);
+  };
+
+  const resetGame = () => {
+    setPlayersTable([]);
+    setPlayModalVisible(false);
+    resetAll();
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.scoreWrapper}>
-        <View style={styles.scoreContainer}>
-          <TouchableOpacity
-            onPress={() => setPlayModalVisible(true)}
-            style={{
-              flexDirection: "row",
-              position: "absolute",
-              left: 0,
-              backgroundColor: "#84cc16",
-              borderRadius: 20,
-              padding: 10,
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 10,
-                alignItems: "center",
-              }}
-            >
-              <FontAwesome
-                size={20}
-                style={{ marginBottom: -3 }}
-                name="user"
-                color={"#fff"}
-              />
-              <Text style={{ color: "#fff", fontWeight: "900", fontSize: 20 }}>
-                {playersTable.length}
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <EasyModeButton
-            score={scoreTable[currentStep - 1]}
-            bg={currentStep <= 6 ? colors[currentStep - 1] : "#eab308"}
-          />
-
-          <TouchableOpacity
-            onPress={() => setFinalScoreModalVisiblle(true)}
-            style={{
-              flexDirection: "row",
-              position: "absolute",
-              right: 0,
-              backgroundColor: "#84cc16",
-              borderRadius: 20,
-              padding: 10,
-            }}
-          >
-            <Text style={{ color: "#fff", fontWeight: "700" }}>total</Text>
-            <Text style={{ marginLeft: 4, color: "#fff", fontWeight: "900" }}>
-              {totalScore}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.subScoreContainer}>
-          {colors.map((color, i) => (
-            <TouchableOpacity
-              key={color}
-              style={{ display: "flex", alignItems: "center", gap: 4 }}
-              onPress={() => changeStep(i + 1)}
-            >
-              {scoreTable[i] > 0 ? (
-                <Text style={{ color, fontWeight: "700", fontSize: 20 }}>
-                  {scoreTable[i]}
-                </Text>
-              ) : (
-                <View
-                  style={{
-                    backgroundColor: color,
-                    width: 24,
-                    height: 24,
-                    borderRadius: 20,
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          ))}
-          {pileImages.map((type, i) => (
-            <View key={i} style={{ alignItems: "center", gap: 4 }}>
-              <TouchableOpacity
-                onPress={() => changeStep(i + 7)}
-                className={currentStep == i + 7 ? "py-2 scale-150" : ""}
-                style={{ paddingVertical: 8 }}
-              >
-                {scoreTable[i + 6] > 0 ? (
-                  <Text
-                    style={{
-                      color: "#eab308",
-                      fontWeight: "700",
-                      fontSize: 20,
-                    }}
-                  >
-                    {scoreTable[i + 6]}
-                  </Text>
-                ) : (
-                  <Image source={type} style={{ width: 24, height: 24 }} />
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </View>
+      <PlayerScoreDisplay
+        setPlayModalVisible={setPlayModalVisible}
+        playersTable={playersTable}
+        scoreTable={scoreTable}
+        currentStep={currentStep}
+        setFinalScoreModalVisiblle={setFinalScoreModalVisiblle}
+        totalScore={totalScore}
+        changeStep={changeStep}
+      />
       {currentStep < 7 ? (
         <PileWrapper
           handleOnPress={handleOnPress}
@@ -196,7 +122,12 @@ export default function EndGameCalculate() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <TouchableOpacity
               onPress={() => addTypeScore(i)}
-              style={styles.numberButton}
+              style={{
+                ...styles.numberButton,
+                ...(selected.length === i
+                  ? { border: "8px solid #fff", backgroundColor: "#eab308" }
+                  : {}),
+              }}
               key={i}
             >
               <Text key={i} style={styles.numberText}>
@@ -211,40 +142,27 @@ export default function EndGameCalculate() {
         </View>
       )}
 
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          width: "100%",
-        }}
-      >
-        <TouchableOpacity onPress={resetCurrent} style={styles.button}>
-          <Text style={styles.buttonText}>Reset</Text>
-        </TouchableOpacity>
-        {currentStep > 9 && (
-          <>
-            <TouchableOpacity
-              onPress={nextPlayer}
-              style={{ ...styles.button_cancel, backgroundColor: "#84cc16" }}
-            >
-              <Text style={styles.buttonText}>Next Player</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
+      <GameButtonGroup
+        resetCurrent={resetCurrent}
+        currentStep={currentStep}
+        nextPlayer={nextPlayer}
+      />
       <FinalScoreModal
         finalScoreModalVisiblle={finalScoreModalVisiblle}
         setFinalScoreModalVisiblle={setFinalScoreModalVisiblle}
         finalScore={finalScore}
         setfinalScore={setfinalScore}
+        nextPlayer={nextPlayer}
+        isReadyToNextPlayer={isReadyToNextPlayer}
       />
       <AllPlayModal
         playModalVisible={playModalVisible}
         setPlayModalVisible={setPlayModalVisible}
         playersTable={playersTable}
         setPlayersTable={setPlayersTable}
+        resetGame={resetGame}
       />
+      <MySnackbar visible={visible} setVisible={setVisible} />
     </View>
   );
 }
@@ -256,58 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
   },
-  info: {
-    backgroundColor: "rgba(255,255,255,0.8)",
-    padding: 40,
-  },
-  scoreWrapper: {
-    marginTop: 0,
-    backgroundColor: "rgba(255,255,255,0.6)",
-    padding: 20,
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-  },
-  scoreContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    flexDirection: "row",
-    width: "100%",
-  },
-  subScoreContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  totalScore: {
-    color: "#fff",
-    fontSize: 40,
-    fontWeight: "700",
-    paddingHorizontal: 20,
-    paddingVertical: 4,
-    borderRadius: 50,
-    alignItems: "center",
-  },
-  button_cancel: {
-    backgroundColor: "red",
-    paddingHorizontal: 24,
-    paddingVertical: 15,
-    borderRadius: 20,
-    marginBottom: 16,
-  },
   button: {
     backgroundColor: "#22d3ee",
     paddingHorizontal: 24,
     paddingVertical: 15,
-    borderRadius: 20,
+    borderRadius: 24,
     marginBottom: 16,
   },
   buttonText: {
@@ -319,8 +190,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     flexDirection: "row",
     width: "100%",
-    gap: 50,
+    height: "60%",
+    columnGap: 40,
     justifyContent: "center",
+    marginTop: 20,
   },
   numberText: {
     fontWeight: "900",
@@ -335,13 +208,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "40%",
     height: 110,
-    backgroundColor: "#eab308ee",
+    backgroundColor: "#eab308cc",
     borderRadius: 50,
-  },
-  totalScoreText: {
-    fontSize: 40,
-    fontWeight: "700",
-    color: "#fff",
-    paddingHorizontal: 10,
   },
 });

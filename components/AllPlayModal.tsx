@@ -8,17 +8,14 @@ type props = {
   setPlayModalVisible: (a: boolean) => void;
   playersTable: number[];
   setPlayersTable: (a: any) => void;
+  resetGame: () => void;
 };
 const AllPlayModal: FC<props> = ({
   playModalVisible,
   setPlayModalVisible,
   playersTable,
-  setPlayersTable,
+  resetGame,
 }) => {
-  const resetGame = () => {
-    setPlayersTable([]);
-    setPlayModalVisible(false);
-  };
   return (
     <Modal
       visible={playModalVisible}
@@ -73,7 +70,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 24,
     display: "flex",
     alignItems: "center",
     gap: 30,
@@ -82,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#22d3ee",
     paddingHorizontal: 24,
     paddingVertical: 15,
-    borderRadius: 20,
+    borderRadius: 24,
     marginBottom: 16,
   },
   buttonText: {
